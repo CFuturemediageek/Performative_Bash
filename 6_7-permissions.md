@@ -54,7 +54,7 @@ I guess they would have to be blindfolded and hope for the best when adding the 
 
 ------------------------
 
-In the UNIX sense, lets apply this to a some files that you may have created. 
+In the UNIX sense, lets apply this to some files that you may have created. 
 
 
 
