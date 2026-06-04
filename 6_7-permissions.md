@@ -63,3 +63,56 @@ We can touch three files.
 touch file{1..3}.txt   
 
 You should have the following when you ls in your current directory - file1.txt file2.txt file3.txt
+
+
+When you set permissions on them youre going to want to use the chmod command followed by the permission set then the file name. 
+
+In UNIX, each file has three groups of diners (or “participants”):
+
+Owner – the person who created the file (the main baker).
+Group – others in your kitchen crew.
+Others – anyone else wandering by (the tasters).
+
+
+Then each gets a combination of three permission types:
+
+r – read (you get to “see” what’s in the file)
+
+w – write (you get to “add ingredients” or even “change/affect the recipe”)
+
+
+x – execute (you get to “operate the oven,” i.e., run the file if it’s a program)
+
+
+
+
+Let’s say we want:
+
+file1.txt
+Owner: full control (7)
+Group: read-only (4)
+Others: no access (0)
+
+
+chmod 740 file1.txt
+
+
+
+
+
+
+
+OR 
+
+
+- file3.txt
+
+Owner: execute-only (1)
+Group: execute-only (1)
+Others: execute-only (1)
+(Like giving everyone limited permission to turn on the oven… but they can’t see or change the recipe.)
+
+
+chmod 111 file3.txt
+
+
