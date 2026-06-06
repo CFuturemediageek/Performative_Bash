@@ -116,3 +116,5 @@ Others: execute-only (1)
 chmod 111 file3.txt
 
 
+An example of this would be things such as deploying a script ( .sh file ) or EVEN when you cd into a directory - this is considered an executable bit permission.
+
