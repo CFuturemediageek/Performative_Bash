@@ -1,4 +1,4 @@
-My personal command solutions 
+#My personal command solutions 
 
 
 1. lsblk -e7 -o NAME,SIZE,TYPE,FSTYPE -n 
