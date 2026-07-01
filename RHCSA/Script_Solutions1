@@ -1,0 +1,128 @@
+
+- Configure Autofs to Automount a Users Share
+#Task:
+#Configure Autofs so that accessing /misc/users mounts the NFS export serverX.example.com:/export/users
+
+
+sudo dnf install autofs -y 
+
+nano /etc/auto.master 
+
+/misc /etc/auto.misc 
+
+
+nano /etc/auto.misc 
+
+users -rw serverX.example.com:/export/users 
+
+sudo systemctl enable --now autofs 
+sudo systemctl restart autofs 
+
+
+
+pvcreate /dev/sdb 
+vgcreate vgdata /dev/sdb 
+lvcreate -L 2G -n lvbackup vgdata 
+
+mkfs.xfs /dev/vgdata/lvbackup 
+
+mkdir -p /backup 
+
+echo "/dev/vgdata/lvbackup /backup xfs defaults 0 0" | sudo tee -a /etc/fstab 
+
+mount -a 
+df -h 
+
+
+
+
+#LVM Scenario 2. 
+
+
+pvcreate /dev/sdc 
+vgextend vgdata /dev/sdc 
+lvextend -r -L +1G /dev/vgdata/lvbackup 
+
+
+
+
+
+#LVM SCENARIO 3 (Full workflow + filesystem grow)
+#You have a new disk available at /dev/sdd.
+#Your system already has:
+#• A volume group called vgdata
+#• An existing LV: /dev/vgdata/lvbackup
+#• Your task is to create a NEW logical volume, format it, mount it, AND then extend it.
+
+
+#LVM Scenario 3. 
+
+pvcreate /dev/sdd 
+
+vgextend vgdata /dev/sdd 
+
+lvcreate -L 3G -n lvarchive vgdata 
+mkfs.xfs /dev/vgdata/lvarchive 
+
+mkdir -p /archive 
+
+echo "/dev/vgdata/lvarchive /archive xfs defaults 0 0" | sudo tee -a /etc/fstab 
+
+mount -a 
+
+lvextend -r -L +2G /dev/vgdata/lvarchive 
+
+
+
+
+
+
+
+
+
+Script Practice Scenario 1 
+
+
+
+sudo tee /root/setup_homes.sh > /dev/null << 'EOF'
+
+#!/usr/bin/env bash 
+
+USERSET="/root/newhomes.txt"
+LOG="/root/homelog.txt"
+
+while read SET; do 
+
+mkdir -p /home/$SET 
+chown $SET:$SET /home/$SET 
+chmod 700 /home/$SET 
+
+echo "Created the following directory: /home/$SET" >> "$LOG"   
+done < "USERSET"
+
+EOF 
+
+
+
+
+Scenario 2. 
+
+
+sudo tee /home/backup_home.sh > /dev/null << 'EOF'
+
+#!/usr/bin/env bash
+LOG="/var/log/homebackup.log"
+BACKUP="/var/backups/home.tar.gz"
+
+
+echo "Backup started: $(date)" >> "$LOG"
+if tar czf "$BACKUP" /home >> "$LOG" 2>&1; then
+ echo "Backup completed successfully: $(date)" >> "$LOG"
+ exit 0
+else
+ echo "Backup FAILED: $(date)" >> "$LOG"
+ exit 1
+fi
+EOF
+
+
