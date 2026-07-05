@@ -1,0 +1,175 @@
+grep -Ei '^[A-Z].{10,}$' /usr/share/dict/words | awk 'NF' > /root/lines.txt 
+
+
+
+Task 2. 
+
+tar cjf /root/etc-full-backup.tar.bz2 --exclude=ssh* /etc
+
+
+
+Task 3. 
+
+groupadd -f research 
+groupadd -f analytics
+useradd -g research -G analytics -s /bin/bash researcher 
+
+passwd researcher
+chage -M 45 researcher
+
+task 4. 
+
+find /home -mindepth 1 -maxdepth 1 -type f -print0 | tar -czf /root/home-snap.gz --null -T -
+
+
+Task 5. 
+
+sudo -u researcher ssh-keygen -t ed25519 
+
+chmod 700 /home/researcher/.ssh 
+chmod 600 /home/researcher/.ssh/authorized_keys 
+
+chown -R researcher:research /home/researcher/.ssh
+
+sudo tee /etc/ssh/sshd_config.d/100_researcher.conf > /dev/null << 'EOF'
+
+Match User researcher
+PasswordAuthentication no
+PubKeyAuthentication yes 
+
+EOF
+
+systemctl reload sshd
+
+
+
+Task 6. 
+
+parted /dev/vdb 
+
+mklabel gpt
+mkpart primary 1MiB 1025MiB 
+print
+quitTask 9. 
+
+
+firewall-cmd --permanent --add-service=http
+firewall-cmd --permanent --add-service=https 
+firewall-cmd --permanent --add-rich-rule='rule family="ipv4" source address="192.168.55.25" port port=2022 protocol=tcp accept'
+firewall-cmd --permanent --add-rich-rule='rule family="ipv4" source address="10.10.10.44" drop'
+firewall-cmd --reload 
+
+
+pvcreate /dev/vdb1 
+
+vgextend vgdata /dev/vdb1 
+
+vgdisplay vgdata 
+
+--------------------Task 9. 
+
+
+firewall-cmd --permanent --add-service=http
+firewall-cmd --permanent --add-service=https 
+firewall-cmd --permanent --add-rich-rule='rule family="ipv4" source address="192.168.55.25" port port=2022 protocol=tcp accept'
+firewall-cmd --permanent --add-rich-rule='rule family="ipv4" source address="10.10.10.44" drop'
+firewall-cmd --reload 
+
+parted /dev/vdc
+
+mklabel gpt 
+mkpart primary 2MiB 2050MiB 
+print 
+quit 
+
+mkfs.xfs /dev/vdc1 
+
+mkdir -p /mnt/data 
+
+echo "UUID= /mnt/data xfs defaults 0 0" | sudo tee -a /etc/fstab 
+
+mount -a 
+
+
+
+
+
+
+mkdir -p /misc 
+echo "/misc /etc/auto.misc" >> /etc/auto.master 
+
+echo "tools -fstype=nfs,rw,hard serverB.example.com:/exports/tools" > /etc/auto.misc
+
+systemctl enable autofs
+systemctl restart autofs 
+
+ls /misc/tools
+
+
+
+
+
+
+
+tee /root/cleanup.sh > /dev/null << 'EOF'
+
+#!/usr/bin/env bash 
+
+/usr/bin/find /tmp -type f -mtime +7 -delete
+
+EOF
+
+chmod +x /root/cleanup.sh 
+
+
+
+tee /etc/systemd/system/cleanup-temp.service > /dev/null << 'EOF'
+
+[Unit]
+Description=Deletes files older than 7 days
+
+[Service]
+Type=oneshot 
+ExecStart=/root/cleanup.sh
+
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target 
+
+EOF
+
+systemctl daemon-reload 
+
+
+tee /etc/systemd/system/cleanup-temp.timer > /dev/null << 'EOF'
+[Unit]
+
+Description=timer for the cleanup service 
+
+[Timer]
+OnCalendar=*-*-* 03:15
+
+[Install]
+WantedBy=timers.target 
+
+
+
+EOF
+
+
+systemctl enable --now cleanup-temp.timer 
+systemctl status cleanup-temp.timer
+
+
+
+
+Task 9. 
+
+
+firewall-cmd --permanent --add-service=http
+firewall-cmd --permanent --add-service=https 
+firewall-cmd --permanent --add-rich-rule='rule family="ipv4" source address="192.168.55.25" port port=2022 protocol=tcp accept'
+firewall-cmd --permanent --add-rich-rule='rule family="ipv4" source address="10.10.10.44" drop'
+firewall-cmd --reload 
