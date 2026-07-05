@@ -33,6 +33,9 @@ This repository documents my journey learning Bash and Linux administration thro
 
 
 
+
+
+# RHCSA Study prompt via Claude/OpenAI 
 The prompt I used to simulate the tests for my RHCSA bash submissions as shown in the RHCSA are as follows below - 
 
 
