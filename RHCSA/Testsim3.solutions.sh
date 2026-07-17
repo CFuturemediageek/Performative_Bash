@@ -113,7 +113,7 @@ gpg_check=0
 
 EOF 
 
-sudo dnf disabledrepo="*" enabledrepo=local install tmux 
+sudo dnf --disabledrepo="*" --enabledrepo=local install tmux 
 
 
 
