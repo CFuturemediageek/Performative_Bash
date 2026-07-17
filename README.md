@@ -1,4 +1,4 @@
-# Performative Bash
+# Performative Bash + RHCSA Notes
 
 These notes are an interesting compilation from docs, things I have experimented with from forums and take aways from experienced admin as I seek the most efficient and ultimate truths. 
 A collection of Bash scripts, Linux notes, and RHCSA practice material that I have personally compiled and ran through in personal sit down practice / deep diving. 
